@@ -18,7 +18,7 @@ static NSString *notLoggedKey = @"登入";
 static NSString *haveLoggedKey = @"登出";
 
 @implementation TopAllViewController
-@synthesize loadingView;
+@synthesize loadingView, sectionNames;
 
 - (void)viewWillAppear:(BOOL)animated{
   LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
@@ -36,6 +36,7 @@ static NSString *haveLoggedKey = @"登出";
   self.list = nil;
 }
 - (void)dealloc {
+  [sectionNames release];
   [list release];
   [super dealloc];
 }
@@ -49,7 +50,18 @@ static NSString *haveLoggedKey = @"登出";
 
 - (NSString *)tableView:(UITableView *)atableView titleForHeaderInSection:(NSInteger)section
 {
-	return @"bac";
+  if ([sectionNames count]<2) {
+    sectionNames = [[NSArray alloc]initWithObjects:
+                           @"本站系统", @"南京大学", 
+                           @"乡情校谊", @"电脑技术",
+                           @"学术科学", @"文化艺术",
+                           @"体育娱乐", @"感性休闲",
+                           @"新闻信息", @"百合广角",
+                           @"校务信箱", @"社团群体",
+                           nil];
+  }
+
+  return [sectionNames objectAtIndex:section];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView 
@@ -184,7 +196,6 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (void)logoutSucceed:(ASIHTTPRequest *) aRequest
 { 
-  NSLog([aRequest responseString]);
   /* TODO: 需要重写登出操作,这里输出的结果表明bbslogout不接受get？要试试用一个post？*/
   LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
   lilydelegate.isLogin = false;

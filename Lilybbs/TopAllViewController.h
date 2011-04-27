@@ -13,10 +13,12 @@
 @interface TopAllViewController : BaseTableViewController {
   //loading遮盖层
   LoadingView *loadingView;
+  NSArray* sectionNames;
+
 }
 
 @property (nonatomic, retain) LoadingView* loadingView;
-
+@property (nonatomic, retain) NSArray* sectionNames;
 //从服务器获取热点数据
 -(void)grabURLInBackground;
 - (void)btnAction;
