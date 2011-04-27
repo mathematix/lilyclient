@@ -43,14 +43,14 @@ static NSString *haveLoggedKey = @"登出";
   NSMutableArray *array = [[NSMutableArray alloc] init]; 
 
   //top 10
-  TopTenViewController *topTenViewController =[[TopTenViewController alloc]initWithStyle:UITableViewStylePlain];
+  TopTenViewController *topTenViewController =[[TopTenViewController alloc] initWithNibName:@"TopTenDetail" bundle:nil];
   topTenViewController.title = @"全站十大";
 
   [array addObject:topTenViewController];
   [topTenViewController release];
 
   //top all
-  TopAllViewController *topAllViewController =[[TopAllViewController alloc]initWithStyle:UITableViewStylePlain];
+  TopAllViewController *topAllViewController =[[TopAllViewController alloc]initWithNibName:@"TopAllDetail" bundle:nil];
   topAllViewController.title = @"各区热门";
 
   [array addObject:topAllViewController];

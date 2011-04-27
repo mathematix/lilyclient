@@ -7,13 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
-@class DisclosureDetailController;
+#import "BaseTableViewController.h"
+#import "LoadingView.h"
 
-@interface TopAllViewController : UITableViewController {
-  NSArray *list;
+@interface TopAllViewController : BaseTableViewController {
+  //loading遮盖层
+  LoadingView *loadingView;
 }
 
-@property (nonatomic, retain) NSArray *list;
+@property (nonatomic, retain) LoadingView* loadingView;
+
+//从服务器获取热点数据
+-(void)grabURLInBackground;
+- (void)btnAction;
 
 @end
-/*TODO: 目前这个类是作为功能的测试，等全站十大完成后，再完成全站热门的功能，和全站十大类似，除了解析帖子列表的过程不同*/

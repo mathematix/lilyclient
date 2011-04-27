@@ -18,7 +18,7 @@ static NSString *notLoggedKey = @"登入";
 static NSString *haveLoggedKey = @"登出";
 
 @implementation TopTenViewController
-@synthesize list, loadingView, request;
+@synthesize loadingView;
 
 #pragma mark -
 #pragma mark override Methods
@@ -52,6 +52,26 @@ static NSString *haveLoggedKey = @"登出";
   [super viewDidLoad];
 }
 
+- (void)viewDidDisappear:(BOOL)animated{
+//  NSLog(@"concurrent%@",[request isConcurrent]);
+//  if ([request isCancelled]==true) {
+//    NSLog(@"iscanceled");
+//  }
+//  else
+//    NSLog(@"notcanceled");
+//  
+//  if ([request isFinished]==true) {
+//    NSLog(@"isfinished");
+//  }
+//  else
+//    NSLog(@"notfinished");
+//  
+//  
+  if (isLoadingFinished==false) {
+    [request cancel];
+  }
+}
+
 - (void)viewDidUnload { 
   self.list = nil;
   loadingView = nil;
@@ -73,7 +93,7 @@ static NSString *haveLoggedKey = @"登出";
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-	return 75;
+	return 50;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView 
@@ -87,6 +107,7 @@ static NSString *haveLoggedKey = @"登出";
     //从postListItem.xib载入view
     NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"PostListItem" owner:self options:nil];
 		cell = (UITableViewCell *)[nib objectAtIndex:0];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
   }
   NSUInteger row = [indexPath row];
   
@@ -124,6 +145,8 @@ accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 #pragma mark - grab url
 - (void)grabURLInBackground
 {
+  isLoadingFinished=false;
+  
   NSURL *url = [NSURL URLWithString:@"http://bbs.nju.edu.cn/bbstop10"];
 
   request = [ASIHTTPRequest requestWithURL:url];
@@ -152,12 +175,14 @@ accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
     [loadingView removeView];
     // [loadingView performSelector:@selector(removeView) withObject:nil];
   }
+  isLoadingFinished=true;
   [array release];
 }
 
 - (void)requestFailed:(ASIHTTPRequest *)arequest
 {
   //NSError *error = [arequest error];
+  isLoadingFinished=true;
 }
 
 - (void)btnAction{

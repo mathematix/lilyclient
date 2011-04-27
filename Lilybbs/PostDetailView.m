@@ -65,6 +65,7 @@
   [string appendString:@"</body>"
    "</html>"
    ];		//creating the HTMLString
+
   [self loadHTMLString:string baseURL:nil];		//load the HTML String on UIWebView
   [string release];
 }
@@ -110,9 +111,9 @@
 
 -(NSString*)produceImage:(NSString*)image{
   NSMutableString *returnString=[[[NSMutableString alloc]initWithCapacity:100]autorelease];
-  [returnString appendString:@"<center><IMG SRC=\""];
+  [returnString appendString:@"<center><img src=\""];
   [returnString appendString:image];
-  [returnString appendString:@"\" ALT=\""];
+  [returnString appendString:@"\" alt=\""];
   [returnString appendString:@"\" width=\"300\"></center>"];
   return returnString;
 }
@@ -142,40 +143,63 @@
   [self grabURLInBackground];
 } 
 
-
+//不规范的百合让人很头疼。。。。解析的时候要注意很多问题
 - (NSDictionary *)extractPostContent:(NSString*)content{
   NSMutableDictionary* list = [[[NSMutableDictionary alloc]init] autorelease];
   
   //  NSString *regEx = @"setCookie\\(\\'(.*)\\'\\)";
   NSString * regEx = @"发信人: (.*), 信区";
   NSString *match = [content stringByMatching:regEx capture:1L];
+  if (match==nil) {
+    match=@"";
+  }
   [list setValue:match forKey:@"user"];
   
   regEx = @"信区: (.*)(\\n|\\r)";
   match = [content stringByMatching:regEx capture:1L];
+  if (match==nil) {
+    match=@"";
+  }
   [list setValue:match forKey:@"board"];
   
   regEx = @"标  题: (.*)(\\n|\\r)";
   match = [content stringByMatching:regEx capture:1L];
+  if (match==nil) {
+    match=@"";
+  }
   [list setValue:match forKey:@"title"];
   
   regEx = @"发信站: (.*)(\\n|\\r)";
   match = [content stringByMatching:regEx capture:1L];
+  if (match==nil) {
+    match=@"";
+  }
   [list setValue:match forKey:@"site"];
   
   regEx = @"\\((.*)\\)";
   match = [[list valueForKey:@"site"] stringByMatching:regEx capture:1L];
+  if (match==nil) {
+    match=@"";
+  }
   [list setValue:match forKey:@"time"];
   
-  NSInteger start = [content rangeOfString:[list valueForKey:@"site"]].location + [content rangeOfString:[list valueForKey:@"site"]].length+1;
+  NSInteger start;
+  if (match==@"") {
+    start = 0;
+  }else{
+  start = [content rangeOfString:[list valueForKey:@"site"]].location + [content rangeOfString:[list valueForKey:@"site"]].length+1;
+  }
   
   NSInteger end;
   /*Todo: need a better way to find out the end of the post*/
   if ([content rangeOfString:@"--\n"].location<2000000) {
     end = [content rangeOfString:@"--\n"].location-1;
-  }else
+  }else if  ([content rangeOfString:@"※ 修改"].location<2000000)
   {
     end = [content rangeOfString:@"※ 修改"].location-1;
+  }else
+  {
+    end = [content rangeOfString:content].length;
   }
   
   NSString *post_content = [content substringWithRange:NSMakeRange(start, end-start)];
@@ -183,14 +207,13 @@
   NSArray  *matchArray   = NULL;
   
   /*Todo: need a better way to find out the end of the post*/
-  NSString* regexString = @"(http(.*))";
+  NSString* regexString = @"(http(.*)(jpg|JPG|PNG|png|GIF|gif))";
   
   matchArray = [post_content componentsMatchedByRegex:regexString capture:1L];
   for (NSString* matchString in matchArray) {
     post_content = [post_content stringByReplacingOccurrencesOfString:matchString withString:[self produceImage:matchString]];
   }
   [list setValue:post_content forKey:@"content"];
-  // NSLog([list valueForKey:@"content"]);
   return list;
 }
 
@@ -215,10 +238,10 @@
 {
   TFHpple *xpathParser = [[TFHpple alloc] initWithHTMLData:[arequest responseData]];  
   
-  //elements存放所有post的内容，head_elements存放所有回复链接，为什么没有放一起呢。。。因为一开始没想到
+  //elements存放所有post的内容，head_elements存放所有回复链接，为什么没有放一起呢。。。因为一开始没想到。此外hpple经常解析出错，这个也没办法。。。有空了换正则表达式吧
   NSArray* elements = [xpathParser search:@"//table//textarea"];
   NSArray* head_elements = [xpathParser search:@"//table//tr/td/a[2]"];
-  
+
   NSMutableArray *contents = [[[NSMutableArray alloc] init] autorelease]; 
   for (NSInteger i=0; i<[elements count]; i++) {
     NSMutableArray* object = [[[NSMutableArray alloc] init] autorelease]; 
