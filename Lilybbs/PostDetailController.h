@@ -12,6 +12,7 @@
 #import "TFHpple.h"
 
 @interface PostDetailController : UIViewController {
+  //没有xib，手动生成view
 	PostDetailView* _postDetailView;
   NSString* urlString;
 }

@@ -1,14 +1,15 @@
 //
-//  AuthenticationViewController.h
-//  Part of the ASIHTTPRequest sample project - see http://allseeing-i.com/ASIHTTPRequest for details
+//  PostController.h
+//  Lilybbs
 //
-//  Created by Ben Copsey on 01/08/2009.
-//  Copyright 2009 All-Seeing Interactive. All rights reserved.
+//  Created by panda on 11-4-22.
+//  Copyright 2011年 __MyCompanyName__. All rights reserved.
 //
+
 
 #import <UIKit/UIKit.h>
 #import	"SampleViewController.h"
-#import "LoginDelegate.h"
+
 @class ASIHTTPRequest;
 @class ASIFormDataRequest;
 
@@ -19,7 +20,6 @@
   UISwitch* remswitch;
   ASIFormDataRequest* request;
   UIActivityIndicatorView *activityIndicator;
-  NSObject<LoginDelegate>* delegate;
   
 }
 
@@ -35,7 +35,6 @@
 @property (nonatomic, retain) IBOutlet UISwitch* remswitch;
 @property (nonatomic, retain) NSArray *dataSourceArray;
 @property (nonatomic, retain) ASIHTTPRequest* request;
-@property(nonatomic, retain) NSObject<LoginDelegate> * delegate;
 
 
 @end

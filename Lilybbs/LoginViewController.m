@@ -9,12 +9,10 @@
 #define kRightMargin			20.0
 #define kTweenMargin			10.0
 #define kTextFieldWidth   260.0
-#define kFilename        @"data.plist"
-
-
 #define kTextFieldHeight		30.0
-
 #define kViewTag			1		// for tagging our embedded controls for removal at cell recycle time
+//用作保存用户名密码，后续要进行加密
+#define kFilename        @"data.plist"
 
 static NSString *kSectionTitleKey = @"sectionTitleKey";
 static NSString *kRemKey = @"remKey";
@@ -28,12 +26,10 @@ static NSString *kLabelKey = @"labelKey";
 @synthesize pwfield;
 @synthesize remswitch;
 @synthesize request;
-@synthesize delegate;
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
-
 
 - (void)dealloc
 {
@@ -41,21 +37,22 @@ static NSString *kLabelKey = @"labelKey";
   [pwfield release];
   [remswitch release];
   [dataSourceArray release];
+ // [request release];
+  [activityIndicator release];
   [super dealloc];
 }
 
-/*
- Most of the code below here relates to the table view, and isn't that interesting
- */
+
 - (void)viewWillAppear:(BOOL)animated{
+  //如果是保存密码的话，这边加载
   [self loadPass];
 }
 
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-
   self.title = NSLocalizedString(@"登录百合", @"");
+  //数据，用来构建tableview
 	self.dataSourceArray = [NSArray arrayWithObjects:
                           [NSDictionary dictionaryWithObjectsAndKeys:
                            @"用户名 密码", kSectionTitleKey,
@@ -67,7 +64,8 @@ static NSString *kLabelKey = @"labelKey";
                            @"记住密码", kLabelKey,
                            self.remswitch, kRemKey,
                            nil], nil];
-  // Do any additional setup after loading the view from its nib.
+
+  //创建navigation bar
   UINavigationBar* tableViewNavigationBar = [[UINavigationBar alloc] initWithFrame: CGRectMake(0.0f, 0.0f, 320.0f, 44.0f)];
   
   UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]
@@ -266,9 +264,6 @@ static NSString *kLabelKey = @"labelKey";
 
 
 // login related
-
-
-
 #pragma mark -
 #pragma mark UITextFieldDelegate
 
@@ -286,20 +281,6 @@ static NSString *kLabelKey = @"labelKey";
 -(IBAction)cancelAction:(id)sender{
   [self dismiss];
 }
-
-//- (IBAction)loginAction:(id)sender
-//{
-//  LilybbsAppDelegate* delegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-//  //access specific variables in delegate as follows:
-//  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:
-//                        @"Hey, do you see the disclosure button?" 
-//                                                  message:delegate.username
-//                                                 delegate:nil 
-//                                        cancelButtonTitle:@"Won't happen again" 
-//                                        otherButtonTitles:nil];
-//  [alert show];
-//  [alert release];    
-//}
 
 - (IBAction)loginAction:(id)sender
 {
@@ -359,14 +340,11 @@ static NSString *kLabelKey = @"labelKey";
     lilydelegate.isLogin = true;
     [cookie_value release];
     
-    
  //   [self.navigationItem setRightBarButtonItem:nil];
     [activityIndicator stopAnimating];
-    [activityIndicator release];
     activityIndicator = nil;
-    
+
     [self dismiss];
-    [delegate passValue:@"登出"];
 
   }
 }
@@ -399,7 +377,7 @@ static NSString *kLabelKey = @"labelKey";
 
 
 
-//
+//保存和载入密码相关
 - (NSString *)dataFilePath {
   NSArray *paths = NSSearchPathForDirectoriesInDomains(
                                                        NSDocumentDirectory, NSUserDomainMask, YES);

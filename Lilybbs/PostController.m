@@ -31,12 +31,14 @@
 
 - (void)dealloc
 {
+  [request clearDelegatesAndCancel];
   [request release];
   [titleLabel release];
   [activityIndicator release];
   [urlString release];  
   [content_view release];
   [titleField release];
+  [postData release];
   [super dealloc];
 }
 
@@ -51,47 +53,12 @@
   [self grabURLInBackground];
 }
 
-- (void)grabURLInBackground
-{
-  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-
-  NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@&%@",urlString,lilydelegate.cookie_value]];
-  ASIHTTPRequest *reply_request = [ASIHTTPRequest requestWithURL:url];
-  [reply_request setDelegate:self];
-  [reply_request startAsynchronous];
-}
-
-- (void)requestFinished:(ASIHTTPRequest *)arequest
-{
-  postData = [[NSMutableDictionary alloc] init];
-  
-  TFHpple *xpathParser = [[TFHpple alloc] initWithHTMLData:[arequest responseData]];  
-  //  
-  TFHppleElement* element = [[xpathParser search:@"//input[@name='title']"] objectAtIndex:0];
-  NSString* title = [element objectForKey:@"value"];
-  
-  element = [[xpathParser search:@"//form[@name='form2']"] objectAtIndex:0];
-  [postData setValue:[element objectForKey:@"action"] forKey:@"action"];  //
-  
-  element = [[xpathParser search:@"//input[@name='pid']"] objectAtIndex:0];
-  [postData setValue:[element objectForKey:@"value"] forKey:@"pid"];  //
-
-  element = [[xpathParser search:@"//input[@name='reid']"] objectAtIndex:0];
-  [postData setValue:[element objectForKey:@"value"] forKey:@"reid"];  //
-  
-  [titleField setText:title];
-}
-
-- (void)requestFailed:(ASIHTTPRequest *)arequest
-{
-  //NSError *error = [arequest error];
-}
-
 - (void)viewDidLoad
 {
-  [super viewDidLoad];  
+  [super viewDidLoad];
+  //显示取消，发表按钮
   [self showNomalButton:self];
-  
+  //设置textview的属性
   [self.content_view.layer setBackgroundColor:[[UIColor whiteColor] CGColor]];
   [self.content_view.layer setBorderColor:[[UIColor grayColor] CGColor]];
   [self.content_view.layer setBorderWidth:1.0];
@@ -104,24 +71,16 @@
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillAppear:) name:UIKeyboardWillShowNotification object:nil];
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillDisappear:) name:UIKeyboardWillHideNotification object:nil];
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillAppear:) name:UITextViewTextDidBeginEditingNotification object:nil];
-  
 }
 
 - (void)viewDidUnload
 {
-  [postData release];
   [super viewDidUnload];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
   return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
-
-//change the textview size============
-- (void) dismiss {
-	[[self parentViewController] dismissModalViewControllerAnimated:YES];
 }
 
 -(void)keyboardWillAppear:(NSNotification *)notification {
@@ -173,7 +132,6 @@
   [UIView commitAnimations];
   [self showNomalButton:self];
   [content_view resignFirstResponder];
- // [titleField becomeFirstResponder];
 }
 
 - (void)changeToEditMode:(id)sender{
@@ -202,11 +160,8 @@
 
 - (IBAction)post:(id)sender
 {
-  
   NSURL *url;
-  
   LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-
   url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@&%@",[postData objectForKey:@"action"],lilydelegate.cookie_value]];
   NSString* title = [titleField text];
   NSString* content = [content_view text];
@@ -220,7 +175,8 @@
   [self.navigationItem setRightBarButtonItem:loadingButton];
   [loadingButton release];
   [activityIndicator startAnimating];
-  
+
+  //生成并提交form
   request = [ASIFormDataRequest requestWithURL:url];
   [request setPostValue:[postData objectForKey:@"pid"] forKey:@"pid"];
   [request setPostValue:[postData objectForKey:@"reid"] forKey:@"reid"];
@@ -233,20 +189,20 @@
   [request setDidFinishSelector:@selector(postSucceed:)];
   [request setDidFailSelector:@selector(postFailed:)];
   [request setDelegate:self];
-  [request setUseSessionPersistence:NO]; //Shouldn't be needed as this is the default
+  [request setUseSessionPersistence:NO];
   [request setShouldRedirect:true];
   [request startAsynchronous];
-  
 }
 
-- (void)loginSucceed:(ASIHTTPRequest *) aRequest
+- (void)postSucceed:(ASIHTTPRequest *) aRequest
 { 
   [activityIndicator stopAnimating];
   [activityIndicator release];
-
+  /*TODO: 加入是否发表成功的判断*/
+  [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)loginFailed:(ASIHTTPRequest *) aRequest
+- (void)postFailed:(ASIHTTPRequest *) aRequest
 { 
   NSLog(@"LOginfailed");
   UIAlertView *alert = [[UIAlertView alloc] initWithTitle:
@@ -262,7 +218,43 @@
   [activityIndicator release];
 }
 
+//初始化
+- (void)grabURLInBackground
+{
+  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+  //相当于点击发表文章或者回复文章，主要是为了从返回的页面中获取pid
+  NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@&%@",urlString,lilydelegate.cookie_value]];
+  ASIHTTPRequest *reply_request = [ASIHTTPRequest requestWithURL:url];
+  [reply_request setDelegate:self];
+  [reply_request startAsynchronous];
+}
 
+- (void)requestFinished:(ASIHTTPRequest *)arequest
+{
+  postData = [[NSMutableDictionary alloc] init];
+  
+  TFHpple *xpathParser = [[TFHpple alloc] initWithHTMLData:[arequest responseData]];  
+  //  
+  TFHppleElement* element = [[xpathParser search:@"//input[@name='title']"] objectAtIndex:0];
+  NSString* title = [element objectForKey:@"value"];
+  
+  element = [[xpathParser search:@"//form[@name='form2']"] objectAtIndex:0];
+  [postData setValue:[element objectForKey:@"action"] forKey:@"action"];  //
+  
+  element = [[xpathParser search:@"//input[@name='pid']"] objectAtIndex:0];
+  [postData setValue:[element objectForKey:@"value"] forKey:@"pid"];  //
+  
+  element = [[xpathParser search:@"//input[@name='reid']"] objectAtIndex:0];
+  [postData setValue:[element objectForKey:@"value"] forKey:@"reid"];  //
+  
+  [titleField setText:title];
+}
+
+- (void)requestFailed:(ASIHTTPRequest *)arequest
+{
+  /*TODO: 错误处理*/
+  //NSError *error = [arequest error];
+}
 
 
 @end

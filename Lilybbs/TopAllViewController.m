@@ -10,7 +10,7 @@
 #import "LilybbsAppDelegate.h"
 #import "PostController.h"
 
-static NSString *notLoggedKey = @"登入";
+//static NSString *notLoggedKey = @"登入";
 static NSString *haveLoggedKey = @"登出";
 
 @implementation TopAllViewController

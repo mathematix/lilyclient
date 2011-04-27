@@ -44,6 +44,8 @@
 		BA51E21C134DEA8800DECA82 /* PostListItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA51E21B134DEA8800DECA82 /* PostListItem.xib */; };
 		BA8B537013668B30009F1914 /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = BA8B536F13668B30009F1914 /* style.css */; };
 		BA8B537213668B41009F1914 /* all.js in Sources */ = {isa = PBXBuildFile; fileRef = BA8B537113668B41009F1914 /* all.js */; };
+		BA8B53BA136706C6009F1914 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8B53B9136706C6009F1914 /* LoadingView.m */; };
+		BA8B53BD136708BC009F1914 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA8B53BC136708BC009F1914 /* QuartzCore.framework */; };
 		BAC4EE411361395E00D36D9B /* PostController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAC4EE3F1361395E00D36D9B /* PostController.m */; };
 		BAC5F48C13625D2A00F40DBD /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = BAC5F48B13625D2A00F40DBD /* RegexKitLite.m */; };
 		BAC5F49013625D9800F40DBD /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAC5F48F13625D9800F40DBD /* libicucore.dylib */; };
@@ -145,6 +147,9 @@
 		BA8B536F13668B30009F1914 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
 		BA8B537113668B41009F1914 /* all.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = all.js; sourceTree = "<group>"; };
 		BA8B53731366B01D009F1914 /* PostDetailDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostDetailDelegate.h; sourceTree = "<group>"; };
+		BA8B53B8136706C6009F1914 /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
+		BA8B53B9136706C6009F1914 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
+		BA8B53BC136708BC009F1914 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BAC4EE3E1361395E00D36D9B /* PostController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostController.h; sourceTree = "<group>"; };
 		BAC4EE3F1361395E00D36D9B /* PostController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostController.m; sourceTree = "<group>"; };
 		BAC5F48A13625D2A00F40DBD /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
@@ -190,6 +195,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA8B53BD136708BC009F1914 /* QuartzCore.framework in Frameworks */,
 				BAC5F49013625D9800F40DBD /* libicucore.dylib in Frameworks */,
 				BA2A3BD813617D7C0028CE01 /* libxml2.dylib in Frameworks */,
 				BA2A3BD613617CDF0028CE01 /* libz.1.2.3.dylib in Frameworks */,
@@ -279,6 +285,8 @@
 			children = (
 				BA50CFDF1360153900F95D66 /* PostDetailView.h */,
 				BA50CFE01360153900F95D66 /* PostDetailView.m */,
+				BA8B53B8136706C6009F1914 /* LoadingView.h */,
+				BA8B53B9136706C6009F1914 /* LoadingView.m */,
 				BAF8F47B1345963300593BC2 /* MainWindow.xib */,
 				BA51E184134976B800DECA82 /* TopTenDetail.xib */,
 				BA51E18B134D964A00DECA82 /* TopAllDetail.xib */,
@@ -399,6 +407,7 @@
 			isa = PBXGroup;
 			children = (
 				BA2A3BD713617D7C0028CE01 /* libxml2.dylib */,
+				BA8B53BC136708BC009F1914 /* QuartzCore.framework */,
 				BA2A3BD513617CDF0028CE01 /* libz.1.2.3.dylib */,
 				BAC5F48F13625D9800F40DBD /* libicucore.dylib */,
 				BA2A3BD213617CC50028CE01 /* MobileCoreServices.framework */,
@@ -607,6 +616,7 @@
 				BAC5F59413631B3500F40DBD /* DetailCell.m in Sources */,
 				BAC5F59713631B5400F40DBD /* ToggleCell.m in Sources */,
 				BA8B537213668B41009F1914 /* all.js in Sources */,
+				BA8B53BA136706C6009F1914 /* LoadingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,15 +18,13 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
     }
     return self;
 }
 
-
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
-	_postDetailView = [[PostDetailView alloc]initWithFrame:[UIScreen mainScreen].applicationFrame];		//initialize a mainView
+	_postDetailView = [[PostDetailView alloc]initWithFrame:[UIScreen mainScreen].applicationFrame];//initialize a mainView
   _postDetailView.urlString = urlString;
  // _postDetailView.urlString = urlString;
 	self.view=_postDetailView;	//make the mainView as the view of this controller
@@ -34,13 +32,9 @@
 	
 }
 
-
 - (void)didReceiveMemoryWarning
 {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
+  [super didReceiveMemoryWarning];
 }
 
 #pragma mark - View lifecycle
@@ -48,14 +42,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -66,7 +57,8 @@
 
 - (void)dealloc
 {
-  [_postDetailView release];
+  [urlString release];
+ // [_postDetailView release];
   [super dealloc];
 }
 
