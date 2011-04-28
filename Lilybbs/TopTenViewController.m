@@ -14,15 +14,12 @@
 #import "LoadingView.h"
 #import "LoginViewController.h"
 
-static NSString *notLoggedKey = @"登入";
 static NSString *haveLoggedKey = @"登出";
 
 @implementation TopTenViewController
-@synthesize loadingView;
 
 #pragma mark -
 #pragma mark override Methods
-
 
 - (void)viewWillAppear:(BOOL)animated {
   LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
@@ -32,44 +29,20 @@ static NSString *haveLoggedKey = @"登出";
   //显示loading遮罩
   loadingView = [LoadingView loadingViewInView:self.view.superview];
   //线程异步加载数据
- // [NSThread detachNewThreadSelector:@selector(myTaskMethod) toTarget:self withObject:nil];
   [self grabURLInBackground];
 }
 
-//- (void) viewDidDisappear:(BOOL)animated{
-//  // Cancels an asynchronous request
-//  NSLog(@"aaa");
-//  if (request!=nil&&[request isFinished]) {
-//    [request cancel];
-//  }
-//}
-
-- (void)viewDidLoad {
-  UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithTitle:notLoggedKey style:UIBarButtonItemStylePlain target:self action:@selector(btnAction)];
-  [self.navigationItem setRightBarButtonItem:rightBarButton];
-  [rightBarButton release];
-  
-  [super viewDidLoad];
-}
-
-- (void)viewDidDisappear:(BOOL)animated{
-//  NSLog(@"concurrent%@",[request isConcurrent]);
-//  if ([request isCancelled]==true) {
-//    NSLog(@"iscanceled");
-//  }
-//  else
-//    NSLog(@"notcanceled");
-//  
-//  if ([request isFinished]==true) {
-//    NSLog(@"isfinished");
-//  }
-//  else
-//    NSLog(@"notfinished");
-//  
-//  
+- (void)viewWillDisappear:(BOOL)animated{
+  //如果graburl线程还没有结束，那么在这儿cancel掉
   if (isLoadingFinished==false) {
     [request cancel];
   }
+}
+
+- (void)viewDidLoad {
+  //添加登录按钮
+  [self addRightLoginButton];
+  [super viewDidLoad];
 }
 
 - (void)viewDidUnload { 
@@ -87,6 +60,7 @@ static NSString *haveLoggedKey = @"登出";
 
 #pragma mark -
 #pragma mark Table Data Source Methods
+
 - (NSInteger)tableView:(UITableView *)tableView 
  numberOfRowsInSection:(NSInteger)section {
   return [list count];
@@ -130,6 +104,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   PostDetailController *nextController = [[[PostDetailController alloc] init] autorelease];
   //将post的url传入
   nextController.urlString = [(PostListItemModel*)[list objectAtIndex:[indexPath row]] url];
+  //打开post detail页面
   [self.navigationController pushViewController:nextController animated:YES];
 }
 
@@ -173,7 +148,6 @@ accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
   [self.tableView reloadData];
   if (loadingView) {
     [loadingView removeView];
-    // [loadingView performSelector:@selector(removeView) withObject:nil];
   }
   isLoadingFinished=true;
   [array release];
@@ -181,42 +155,19 @@ accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 
 - (void)requestFailed:(ASIHTTPRequest *)arequest
 {
-  //NSError *error = [arequest error];
+  NSError *error = [arequest error];
+  //如果超时了，就提示载入失败，要区别于code等于4(就是该request被cancel掉)
+  [loadingView removeView];
+  if ([error code]==2) {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
+                                                    message:@"载入失败！请重试！"
+                                                   delegate:nil 
+                                          cancelButtonTitle:@"确定" 
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];  
+  }
   isLoadingFinished=true;
-}
-
-- (void)btnAction{
-  if ([self.navigationItem.rightBarButtonItem.title isEqualToString:notLoggedKey]) {
-    LoginViewController* controller = [[[LoginViewController alloc] initWithNibName:@"Sample" bundle:nil] autorelease];
-    [self.navigationController presentModalViewController:controller animated:YES];
-  }
-  else{
-    /* TODO: 需要做登出操作 */
-      LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-    
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/bbslogout&",lilydelegate.cookie_value]];
-    
-    request = [ASIHTTPRequest requestWithURL:url];
-    [request setDelegate:self];
-    [request setDidFinishSelector:@selector(logoutSucceed:)];
-    [request setDidFailSelector:@selector(logoutFailed:)];
-    [request startAsynchronous];
-  }
-}
-
-- (void)logoutSucceed:(ASIHTTPRequest *) aRequest
-{ 
-  NSLog([aRequest responseString]);
-  /* TODO: 需要重写登出操作,这里输出的结果表明bbslogout不接受get？要试试用一个post？*/
-  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-  lilydelegate.isLogin = false;
-  lilydelegate.cookie_value = @"";
-  [self.navigationItem rightBarButtonItem].title = notLoggedKey;
-}
-
-- (void)logoutFailed:(ASIHTTPRequest *) aRequest
-{ 
-  NSLog(@"logout failed");
 }
 
 

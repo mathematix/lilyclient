@@ -20,7 +20,7 @@
   UISwitch* remswitch;
   ASIFormDataRequest* request;
   UIActivityIndicatorView *activityIndicator;
-  
+  BOOL isLoadingFinished;
 }
 
 - (IBAction)loginAction:(id)sender;

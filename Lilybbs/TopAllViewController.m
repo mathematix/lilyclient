@@ -14,32 +14,54 @@
 #import "LoginViewController.h"
 #import "PostDetailController.h"
 
-static NSString *notLoggedKey = @"登入";
 static NSString *haveLoggedKey = @"登出";
 
 @implementation TopAllViewController
-@synthesize loadingView, sectionNames;
+@synthesize sectionNames;
+
+#pragma mark -
+#pragma mark override Methods
 
 - (void)viewWillAppear:(BOOL)animated{
   LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
   if(lilydelegate.isLogin == true){
     self.navigationItem.rightBarButtonItem.title = haveLoggedKey;
   }
+  //显示loading遮罩
+  loadingView = [LoadingView loadingViewInView:self.view.superview];
+  //线程异步加载数据
   [self grabURLInBackground];
 }
 
+- (void)viewWillDisappear:(BOOL)animated{
+  //如果graburl线程还没有结束，那么在这儿cancel掉
+  if (isLoadingFinished==false) {
+    [request cancel];
+  }
+}
+
 - (void)viewDidLoad {
+  //添加登录按钮
+  [self addRightLoginButton];
+  
   [super viewDidLoad];
 }
 
 - (void)viewDidUnload {
+  self.sectionNames = nil;
   self.list = nil;
+  self.loadingView = nil;
 }
 - (void)dealloc {
+  [request clearDelegatesAndCancel];
+  [request release];
+  [loadingView release];
   [sectionNames release];
   [list release];
   [super dealloc];
 }
+
+
 #pragma mark -
 #pragma mark Table Data Source Methods
 
@@ -124,7 +146,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   
   NSURL *url = [NSURL URLWithString:@"http://bbs.nju.edu.cn/bbstopall"];
   
-  request = [ASIFormDataRequest requestWithURL:url];
+  request = [ASIHTTPRequest requestWithURL:url];
   [request setDelegate:self];
   [request setResponseEncoding:-2147483623];
   [request setDefaultResponseEncoding:-2147483623];
@@ -133,7 +155,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (void)requestFinished:(ASIHTTPRequest *)arequest
 {
-  //因为服务器返回的data是压缩过的，因此responseString是空值，必须通过responseData来转换。而responseData转换后是写成Unicode格式的gb2312，因此这边处理起来比较麻烦
+  //因为服务器返回的data是压缩过的，因此responseString是空值，必须通过responseData来转换。而responseData转换后是写成Unicode格式(\xxxx)的gb2312，因此这边处理起来比较麻烦
   NSData* responseData = [arequest responseData];
   NSStringEncoding enc = 
     CFStringConvertEncodingToNSStringEncoding (kCFStringEncodingGB_18030_2000); 
@@ -164,49 +186,32 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     }
     [sections addObject:posts];
   }
+  
   self.list = sections;
   [self.tableView reloadData];
+  if (loadingView) {
+    [loadingView removeView];
+  }
+  isLoadingFinished=true;
 }
 
 - (void)requestFailed:(ASIHTTPRequest *)arequest
 {
-  NSLog(@"fail");
-  //NSError *error = [arequest error];
+  [loadingView removeView];
+  NSError *error = [arequest error];
+  //如果超时了，就提示载入失败，要区别于code等于4(就是该request被cancel掉)
+  if ([error code]==2) {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
+                                                    message:@"载入失败！请重试！"
+                                                   delegate:nil 
+                                          cancelButtonTitle:@"确定" 
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];  
+  }
   isLoadingFinished=true;
 }
 
-- (void)btnAction{
-  if ([self.navigationItem.rightBarButtonItem.title isEqualToString:notLoggedKey]) {
-    LoginViewController* controller = [[[LoginViewController alloc] initWithNibName:@"Sample" bundle:nil] autorelease];
-    [self.navigationController presentModalViewController:controller animated:YES];
-  }
-  else{
-    /* TODO: 需要做登出操作 */
-    LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-    
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/bbslogout&",lilydelegate.cookie_value]];
-    
-    request = [ASIHTTPRequest requestWithURL:url];
-    [request setDelegate:self];
-    [request setDidFinishSelector:@selector(logoutSucceed:)];
-    [request setDidFailSelector:@selector(logoutFailed:)];
-    [request startAsynchronous];
-  }
-}
-
-- (void)logoutSucceed:(ASIHTTPRequest *) aRequest
-{ 
-  /* TODO: 需要重写登出操作,这里输出的结果表明bbslogout不接受get？要试试用一个post？*/
-  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-  lilydelegate.isLogin = false;
-  lilydelegate.cookie_value = @"";
-  [self.navigationItem rightBarButtonItem].title = notLoggedKey;
-}
-
-- (void)logoutFailed:(ASIHTTPRequest *) aRequest
-{ 
-  NSLog(@"logout failed");
-}
 
 
 @end

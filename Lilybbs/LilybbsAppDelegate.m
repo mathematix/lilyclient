@@ -13,7 +13,7 @@
 
 @synthesize window=_window;
 @synthesize navController;
-@synthesize username,password,cookie_value;
+@synthesize username,password,cookie_value,cookie_dic;
 @synthesize isLogin;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions

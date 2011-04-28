@@ -13,6 +13,7 @@
   NSString* username;
   NSString* password;
   NSString* cookie_value;
+  NSDictionary* cookie_dic;
   BOOL isLogin;
 }
 
@@ -21,6 +22,8 @@
 @property (nonatomic, retain) NSString* username;
 @property (nonatomic, retain) NSString* password;
 @property (nonatomic, retain) NSString* cookie_value;
+@property (nonatomic, retain) NSDictionary* cookie_dic;
+
 @property BOOL isLogin;
 
 @end

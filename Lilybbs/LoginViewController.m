@@ -28,7 +28,7 @@ static NSString *kLabelKey = @"labelKey";
 @synthesize request;
 
 - (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+  [super didReceiveMemoryWarning];
 }
 
 - (void)dealloc
@@ -37,7 +37,7 @@ static NSString *kLabelKey = @"labelKey";
   [pwfield release];
   [remswitch release];
   [dataSourceArray release];
- // [request release];
+  // [request release];
   [activityIndicator release];
   [super dealloc];
 }
@@ -64,7 +64,7 @@ static NSString *kLabelKey = @"labelKey";
                            @"记住密码", kLabelKey,
                            self.remswitch, kRemKey,
                            nil], nil];
-
+  
   //创建navigation bar
   UINavigationBar* tableViewNavigationBar = [[UINavigationBar alloc] initWithFrame: CGRectMake(0.0f, 0.0f, 320.0f, 44.0f)];
   
@@ -84,7 +84,7 @@ static NSString *kLabelKey = @"labelKey";
   self.navigationItem.rightBarButtonItem = saveButton;
   [saveButton release];
   [tableViewNavigationBar sizeToFit]; 
-
+  
   [self.navigationBar pushNavigationItem:self.navigationItem animated:FALSE];
 }
 
@@ -202,7 +202,7 @@ static NSString *kLabelKey = @"labelKey";
 		userfield.keyboardType = UIKeyboardTypeDefault;	// use the default type input method (entire keyboard)
 		userfield.returnKeyType = UIReturnKeyDone;
 		
-	//	userfield.clearButtonMode = UITextFieldViewModeWhileEditing;	// has a clear 'x' button to the right
+    //	userfield.clearButtonMode = UITextFieldViewModeWhileEditing;	// has a clear 'x' button to the right
 		
 		userfield.tag = kViewTag;		// tag this control so we can remove it later for recycled cells
 		
@@ -231,7 +231,7 @@ static NSString *kLabelKey = @"labelKey";
 		pwfield.secureTextEntry = true;
 		pwfield.keyboardType = UIKeyboardTypeDefault;
 		pwfield.returnKeyType = UIReturnKeyDone;
-		    [pwfield addTarget:self action:@selector(savePass:) forControlEvents:UIControlEventEditingChanged];
+    [pwfield addTarget:self action:@selector(savePass:) forControlEvents:UIControlEventEditingChanged];
 		pwfield.clearButtonMode = UITextFieldViewModeWhileEditing;	// has a clear 'x' button to the right
 		
 		pwfield.tag = kViewTag;		// tag this control so we can remove it later for recycled cells
@@ -275,6 +275,10 @@ static NSString *kLabelKey = @"labelKey";
 }
 
 - (void) dismiss {
+  //如果graburl线程还没有结束，那么在这儿cancel掉
+  if (isLoadingFinished==false) {
+    [request cancel];
+  }
 	[[self parentViewController] dismissModalViewControllerAnimated:YES];
 }
 
@@ -300,6 +304,8 @@ static NSString *kLabelKey = @"labelKey";
   [loadingButton release];
   [activityIndicator startAnimating];
   
+  isLoadingFinished = false;
+  
   request = [ASIFormDataRequest requestWithURL:url];
   [request setPostValue:uid forKey:@"id"];
   [request setPostValue:pass forKey:@"pw"];
@@ -309,72 +315,86 @@ static NSString *kLabelKey = @"labelKey";
   [request setUseSessionPersistence:NO]; //Shouldn't be needed as this is the default
   [request setShouldRedirect:true];
   [request startAsynchronous];
-
+  
 }
 
 - (void)loginSucceed:(ASIFormDataRequest *) formRequest
 { 
-  
-  NSString * myResponseString = [formRequest responseString];
+    if ([[formRequest responseString] rangeOfString:@"setCookie"].location != NSNotFound){
+    NSString * myResponseString = [formRequest responseString];
     
-  NSString *regEx = @"setCookie\\(\\'(.*)\\'\\)";
-  NSString *match = [myResponseString stringByMatching:regEx capture:1L];
-  
-  if ([match isEqualToString:@""]==NO) {
-    int i = [match intValue]+2;  
-    NSInteger start = [[NSString stringWithFormat:@"%d", i] length];
-    NSInteger end = [match rangeOfString:@"+"].location;
-    NSString *uid = [match substringWithRange:NSMakeRange(start+1, end-start-1)];
-    NSInteger key = [[match substringFromIndex:end+1] intValue] - 2;
+    NSString *regEx = @"setCookie\\(\\'(.*)\\'\\)";
+    NSString *match = [myResponseString stringByMatching:regEx capture:1L];
     
-    NSMutableString* cookie_value = [[NSMutableString alloc]initWithCapacity:10];
-    [cookie_value appendString:@"_U_NUM="];
-    [cookie_value appendString:[NSString stringWithFormat:@"%d&", i]];
-    [cookie_value appendString:@"_U_UID="];
-    [cookie_value appendString:[NSString stringWithFormat:@"%@&", uid]];
-    [cookie_value appendString:@"_U_KEY="];
-    [cookie_value appendString:[NSString stringWithFormat:@"%d", key]];
-     
-    LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-    lilydelegate.cookie_value = cookie_value;
-    lilydelegate.isLogin = true;
-    [cookie_value release];
-    
- //   [self.navigationItem setRightBarButtonItem:nil];
-    [activityIndicator stopAnimating];
-    activityIndicator = nil;
-
-    [self dismiss];
-
+    if ([match isEqualToString:@""]==NO) {
+      int i = [match intValue]+2;  
+      NSInteger start = [[NSString stringWithFormat:@"%d", i] length];
+      NSInteger end = [match rangeOfString:@"+"].location;
+      NSString *uid = [match substringWithRange:NSMakeRange(start+1, end-start-1)];
+      NSInteger key = [[match substringFromIndex:end+1] intValue] - 2;
+      
+      NSMutableString* cookie_value = [[NSMutableString alloc]init];
+      [cookie_value appendString:@"_U_NUM="];
+      [cookie_value appendString:[NSString stringWithFormat:@"%d&", i]];
+      [cookie_value appendString:@"_U_UID="];
+      [cookie_value appendString:[NSString stringWithFormat:@"%@&", uid]];
+      [cookie_value appendString:@"_U_KEY="];
+      [cookie_value appendString:[NSString stringWithFormat:@"%d", key]];
+      
+      NSMutableDictionary* cookie_dic = [[[NSMutableDictionary alloc]init]autorelease];
+      [cookie_dic setValue:[NSString stringWithFormat:@"%d", i] forKey:@"_U_NUM"];
+      [cookie_dic setValue:uid forKey:@"_U_UID"];
+      [cookie_dic setValue:[NSString stringWithFormat:@"%d", key] forKey:@"_U_KEY"];
+      
+      
+      LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+      lilydelegate.cookie_value = cookie_value;
+      lilydelegate.cookie_dic = cookie_dic;
+      lilydelegate.isLogin = true;
+      [cookie_value release];
+      [activityIndicator stopAnimating];
+      activityIndicator = nil;
+      
+    }else{
+      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
+                                                      message:@"登录失败,请检查用户名密码"
+                                                     delegate:nil 
+                                            cancelButtonTitle:@"确定" 
+                                            otherButtonTitles:nil];
+      [alert show];
+      [alert release]; 
+      
+    }
   }
+  isLoadingFinished = true;
+  [self dismiss];
 }
 
 - (void)loginFailed:(ASIFormDataRequest *) formRequest
 { 
-  NSLog(@"LOginfailed");
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:
-                          @"Hey, do you see the disclosure button?" 
-                                                    message:@"fail to login"
+  if ([[formRequest error] code]==2) {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
+                                                    message:@"登录超时"
                                                    delegate:nil 
-                                          cancelButtonTitle:@"Won't happen again" 
+                                          cancelButtonTitle:@"确定" 
                                           otherButtonTitles:nil];
     [alert show];
-    [alert release];  
-  
-  [activityIndicator stopAnimating];
-  [activityIndicator release];
-  
-  UIBarButtonItem *saveButton = [[UIBarButtonItem alloc]
-                                 initWithTitle:@"登录" 
-                                 style:UIBarButtonItemStyleDone
-                                 target:self
-                                 action:@selector(loginAction:)];
-  self.navigationItem.rightBarButtonItem = saveButton;
-  [saveButton release];
-  [self.navigationBar pushNavigationItem:self.navigationItem animated:NO];
+    [alert release]; 
+    
+    [activityIndicator stopAnimating];
+    [activityIndicator release];
+    
+    UIBarButtonItem *saveButton = [[UIBarButtonItem alloc]
+                                   initWithTitle:@"登录" 
+                                   style:UIBarButtonItemStyleDone
+                                   target:self
+                                   action:@selector(loginAction:)];
+    self.navigationItem.rightBarButtonItem = saveButton;
+    [saveButton release];
+    [self.navigationBar pushNavigationItem:self.navigationItem animated:NO];
+  }
+  isLoadingFinished = true;
 }
-
-
 
 
 //保存和载入密码相关

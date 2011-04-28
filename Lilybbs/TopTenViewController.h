@@ -13,14 +13,8 @@
 #import "BaseTableViewController.h"
 
 @interface TopTenViewController : BaseTableViewController {
-  //loading遮盖层
-  LoadingView *loadingView;
+
 }
 
-@property (nonatomic, retain) LoadingView* loadingView;
-
-//从服务器获取十大数据
--(void)grabURLInBackground;
-- (void)btnAction;
 
 @end

@@ -51,7 +51,7 @@ static NSString *haveLoggedKey = @"登出";
 
   //top all
   TopAllViewController *topAllViewController =[[TopAllViewController alloc]initWithNibName:@"TopAllDetail" bundle:nil];
-  topAllViewController.title = @"各区热门";
+  topAllViewController.title = @"各区热点";
 
   [array addObject:topAllViewController];
   [topAllViewController release];
@@ -107,16 +107,28 @@ static NSString *haveLoggedKey = @"登出";
   }
   else{
     /*TODO: 加入logout action*/
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:
-                          @"Hey, do you see the disclosure button?" 
-                                                    message:@"If you're trying to drill down, touch that instead"
-                                                   delegate:nil 
-                                          cancelButtonTitle:@"Won't happen again" 
-                                          otherButtonTitles:nil];
-    [alert show];
-    [alert release];
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:
+//                          @"Hey, do you see the disclosure button?" 
+//                                                    message:@"If you're trying to drill down, touch that instead"
+//                                                   delegate:nil 
+//                                          cancelButtonTitle:@"Won't happen again" 
+//                                          otherButtonTitles:nil];
+//    [alert show];
+//    [alert release];
+    LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+    //这里用一个必须要登录才能访问的bbsinfo页面来做判断，流量很小，只返回800byte
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/bbsinfo?%@",lilydelegate.cookie_value]];
+    
+    ASIHTTPRequest* request = [ASIHTTPRequest requestWithURL:url];
+    [request setDelegate:self];
+    [request setDidFinishSelector:@selector(logoutSucceed:)];
+    [request setDidFailSelector:@selector(logoutFailed:)];
+    [request startAsynchronous];
+    
   }
   
 }
+
+
 
 @end

@@ -221,12 +221,7 @@
 //初始化
 - (void)grabURLInBackground
 {
-  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-  //相当于点击发表文章或者回复文章，主要是为了从返回的页面中获取pid
-  NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@&%@",urlString,lilydelegate.cookie_value]];
-  ASIHTTPRequest *reply_request = [ASIHTTPRequest requestWithURL:url];
-  [reply_request setDelegate:self];
-  [reply_request startAsynchronous];
+  [self checkLogin];
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)arequest
@@ -254,6 +249,17 @@
 {
   /*TODO: 错误处理*/
   //NSError *error = [arequest error];
+}
+
+-(void)checkLoginSucceed:(ASIHTTPRequest *) formRequest{
+  [super checkLoginSucceed:formRequest];
+  NSLog(@"%@",@"super done");
+  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+  //相当于点击发表文章或者回复文章，主要是为了从返回的页面中获取pid
+  NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@&%@",urlString,lilydelegate.cookie_value]];
+  ASIHTTPRequest *reply_request = [ASIHTTPRequest requestWithURL:url];
+  [reply_request setDelegate:self];
+  [reply_request startAsynchronous];
 }
 
 

@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
+#import "BaseViewController.h"
 
-@interface PostController : UIViewController {
+@interface PostController : BaseViewController {
   UITextView* content_view;
   ASIFormDataRequest* request;
   UILabel* titleLabel;

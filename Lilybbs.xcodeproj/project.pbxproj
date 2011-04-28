@@ -47,6 +47,7 @@
 		BA8B53BA136706C6009F1914 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8B53B9136706C6009F1914 /* LoadingView.m */; };
 		BA8B53BD136708BC009F1914 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA8B53BC136708BC009F1914 /* QuartzCore.framework */; };
 		BA8B53C11367DFDC009F1914 /* BaseTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8B53BF1367DFD9009F1914 /* BaseTableViewController.m */; };
+		BA8B53D6136959AB009F1914 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8B53D4136959A7009F1914 /* BaseViewController.m */; };
 		BAC4EE411361395E00D36D9B /* PostController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAC4EE3F1361395E00D36D9B /* PostController.m */; };
 		BAC5F48C13625D2A00F40DBD /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = BAC5F48B13625D2A00F40DBD /* RegexKitLite.m */; };
 		BAC5F49013625D9800F40DBD /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAC5F48F13625D9800F40DBD /* libicucore.dylib */; };
@@ -153,6 +154,8 @@
 		BA8B53BC136708BC009F1914 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BA8B53BE1367DFD6009F1914 /* BaseTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTableViewController.h; sourceTree = "<group>"; };
 		BA8B53BF1367DFD9009F1914 /* BaseTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseTableViewController.m; sourceTree = "<group>"; };
+		BA8B53D3136959A3009F1914 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
+		BA8B53D4136959A7009F1914 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
 		BAC4EE3E1361395E00D36D9B /* PostController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostController.h; sourceTree = "<group>"; };
 		BAC4EE3F1361395E00D36D9B /* PostController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostController.m; sourceTree = "<group>"; };
 		BAC5F48A13625D2A00F40DBD /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
@@ -267,10 +270,12 @@
 		BA50CFE71360461400F95D66 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				BAF8F4A713459C0600593BC2 /* MainViewController.h */,
-				BAF8F4A813459C0600593BC2 /* MainViewController.m */,
+				BA8B53D3136959A3009F1914 /* BaseViewController.h */,
+				BA8B53D4136959A7009F1914 /* BaseViewController.m */,
 				BA8B53BE1367DFD6009F1914 /* BaseTableViewController.h */,
 				BA8B53BF1367DFD9009F1914 /* BaseTableViewController.m */,
+				BAF8F4A713459C0600593BC2 /* MainViewController.h */,
+				BAF8F4A813459C0600593BC2 /* MainViewController.m */,
 				BAF8F4C21345A48A00593BC2 /* TopTenViewController.h */,
 				BAF8F4C31345A48A00593BC2 /* TopTenViewController.m */,
 				BA51E188134D958700DECA82 /* TopAllViewController.h */,
@@ -623,6 +628,7 @@
 				BA8B537213668B41009F1914 /* all.js in Sources */,
 				BA8B53BA136706C6009F1914 /* LoadingView.m in Sources */,
 				BA8B53C11367DFDC009F1914 /* BaseTableViewController.m in Sources */,
+				BA8B53D6136959AB009F1914 /* BaseViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -24,9 +24,10 @@
 
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
-	_postDetailView = [[PostDetailView alloc]initWithFrame:[UIScreen mainScreen].applicationFrame];//initialize a mainView
+  //initialize a mainView
+	_postDetailView = [[PostDetailView alloc]initWithFrame:[UIScreen mainScreen].applicationFrame];
   _postDetailView.urlString = urlString;
- // _postDetailView.urlString = urlString;
+
 	self.view=_postDetailView;	//make the mainView as the view of this controller
 	[_postDetailView release];	//don't forget to release what you've been allocated
 	
@@ -42,6 +43,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+  //如果view的graburl线程还没有结束，那么在这儿cancel掉
+  if (((PostDetailView*)(self.view)).isLoadingFinished==false) {
+    [((PostDetailView*)(self.view)).http_request cancel];
+  }
 }
 
 - (void)viewDidUnload

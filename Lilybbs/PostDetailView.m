@@ -1,11 +1,10 @@
+//
+//  POstDetailView.m
+//  Lilybbs
+//
+//  Created by panda on 11-4-1.
+//  Copyright 2011年 __badpanda__. All rights reserved.
 
-//
-//  mainView.m
-//  Reader
-//
-//  Created by David Samuel on 6/4/10.
-//  Copyright 2010 Institut Teknologi Bandung. All rights reserved.
-//
 
 #import "PostDetailView.h"
 #import "TFHpple.h"
@@ -16,7 +15,7 @@
 
 @implementation PostDetailView
 @synthesize urlString, reply_links, http_request;
-
+@synthesize isLoadingFinished;
 
 -(id)initWithFrame:(CGRect)frame{
   if([super initWithFrame:frame]){
@@ -61,12 +60,10 @@
     [string appendString:@"<hr>"];
     
   }
-  //	[string appendString:[NSString stringWithFormat:@"<br><br><center>%@<center>",[[arrayPages objectAtIndex:pageNumber-1]description]]];
-  [string appendString:@"</body>"
-   "</html>"
-   ];		//creating the HTMLString
 
-  [self loadHTMLString:string baseURL:nil];		//load the HTML String on UIWebView
+  [string appendString:@"</body></html>"];
+  //load the HTML String on UIWebView
+  [self loadHTMLString:string baseURL:nil];
   [string release];
 }
 
@@ -206,6 +203,8 @@
   
   NSArray  *matchArray   = NULL;
   
+  //此处为对post_content的处理，因为该值为rawtext，需要将其转换成html，例如回车换成<br>，将表情换成图片，这个后续来做。此外可以设置一个选项，是否显示图片，或者根据读取图片大小来选择是否加载。
+  
   /*Todo: need a better way to find out the end of the post*/
   NSString* regexString = @"(http(.*)(jpg|JPG|PNG|png|GIF|gif))";
   
@@ -213,6 +212,7 @@
   for (NSString* matchString in matchArray) {
     post_content = [post_content stringByReplacingOccurrencesOfString:matchString withString:[self produceImage:matchString]];
   }
+  //转换结束
   [list setValue:post_content forKey:@"content"];
   return list;
 }
@@ -227,6 +227,8 @@
 #pragma mark - grab url
 - (void)grabURLInBackground
 {
+  isLoadingFinished=false;
+  
   NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@",self.urlString]];
   
   http_request = [ASIHTTPRequest requestWithURL:url];
@@ -250,11 +252,23 @@
     [contents addObject:object];
   }
   [self produceHTMLForPage:contents];
+  isLoadingFinished=true;
 }
 
 - (void)requestFailed:(ASIHTTPRequest *)arequest
 {
-  //NSError *error = [arequest error];
+  NSError *error = [arequest error];
+  //如果超时了，就提示载入失败，要区别于code等于4(就是该request被cancel掉)
+  if ([error code]==2) {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
+                                                    message:@"载入失败！请重试！"
+                                                   delegate:nil 
+                                          cancelButtonTitle:@"确定" 
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];  
+  }
+  isLoadingFinished=true;  
 }
 
 
