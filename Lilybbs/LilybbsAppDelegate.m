@@ -14,7 +14,7 @@
 @synthesize window=_window;
 @synthesize navController;
 @synthesize username,password,cookie_value,cookie_dic;
-@synthesize isLogin;
+@synthesize isLogin, shouldRefreshView;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

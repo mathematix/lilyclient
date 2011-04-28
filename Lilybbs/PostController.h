@@ -14,17 +14,22 @@
 @interface PostController : BaseViewController {
   UITextView* content_view;
   ASIFormDataRequest* request;
+  ASIHTTPRequest *reply_request;
   UILabel* titleLabel;
   UITextField* titleField;
   UIActivityIndicatorView* activityIndicator;
   NSString* urlString;
   NSMutableDictionary* postData;
+  BOOL isPostingFinished;
+  BOOL isCheckingFinished;
 }
 @property (nonatomic,retain) IBOutlet UITextView* content_view;
 @property (nonatomic, retain) IBOutlet UITextField* titleField;
 @property (nonatomic, retain) IBOutlet UILabel* titleLabel;
 @property (nonatomic, retain) NSString* urlString;
 @property (nonatomic, retain) NSMutableDictionary* postData;
+@property BOOL isPostingFinished;
+@property BOOL isCheckingFinished;
 
 - (IBAction)cancel:(id)sender;
 - (IBAction)post:(id)sender;

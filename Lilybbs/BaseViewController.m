@@ -72,19 +72,17 @@ static NSString *notLoggedKey = @"登入";
 -(void)checkLoginSucceed:(ASIHTTPRequest *) formRequest{
   //如果返回的html中包含"错误"，则说明没有登录
   if ([[formRequest responseString] rangeOfString:@"错误! 您尚未登录!"].location != NSNotFound){
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
-                                                    message:@"错误，请重新登录！"
-                                                   delegate:nil 
-                                          cancelButtonTitle:@"确定" 
-                                          otherButtonTitles:nil];
-    [alert show];
-    [alert release];
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
+//                                                    message:@"错误，请重新登录！"
+//                                                   delegate:nil 
+//                                          cancelButtonTitle:@"确定" 
+//                                          otherButtonTitles:nil];
+//    [alert show];
+//    [alert release];
     LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
     lilydelegate.isLogin = false;
     lilydelegate.cookie_value = @"";
     lilydelegate.cookie_dic = nil;
-  }else{
-    NSLog(@"checklogin");
   }
 }
 

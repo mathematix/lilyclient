@@ -50,6 +50,12 @@
   if (((PostDetailView*)(self.view)).isLoadingFinished==false) {
     [((PostDetailView*)(self.view)).http_request cancel];
   }
+  //如果view的checking线程还没有结束，那么在这儿cancel掉
+  if (((PostDetailView*)(self.view)).isCheckingFinished==false) {
+    [((PostDetailView*)(self.view)).check_request cancel];
+  }
+  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+  lilydelegate.shouldRefreshView = false;
 }
 
 - (void)viewDidUnload

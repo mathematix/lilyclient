@@ -27,10 +27,12 @@ static NSString *haveLoggedKey = @"登出";
   if(lilydelegate.isLogin == true){
     self.navigationItem.rightBarButtonItem.title = haveLoggedKey;
   }
-  //显示loading遮罩
-  loadingView = [LoadingView loadingViewInView:self.view.superview];
-  //线程异步加载数据
-  [self grabURLInBackground];
+  if (lilydelegate.shouldRefreshView==true) {
+    //显示loading遮罩
+    loadingView = [LoadingView loadingViewInView:self.view.superview];
+    //线程异步加载数据
+    [self grabURLInBackground];
+  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
@@ -74,15 +76,15 @@ static NSString *haveLoggedKey = @"登出";
 {
   if ([sectionNames count]<2) {
     sectionNames = [[NSArray alloc]initWithObjects:
-                           @"本站系统", @"南京大学", 
-                           @"乡情校谊", @"电脑技术",
-                           @"学术科学", @"文化艺术",
-                           @"体育娱乐", @"感性休闲",
-                           @"新闻信息", @"百合广角",
-                           @"校务信箱", @"社团群体",
-                           nil];
+                    @"本站系统", @"南京大学", 
+                    @"乡情校谊", @"电脑技术",
+                    @"学术科学", @"文化艺术",
+                    @"体育娱乐", @"感性休闲",
+                    @"新闻信息", @"百合广角",
+                    @"校务信箱", @"社团群体",
+                    nil];
   }
-
+  
   return [sectionNames objectAtIndex:section];
 }
 
@@ -106,9 +108,9 @@ static NSString *haveLoggedKey = @"登出";
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
   }
   NSUInteger row = [indexPath row];
-    NSString *post_name = [[[list objectAtIndex:indexPath.section] objectAtIndex:row] objectForKey:@"post_name"];
+  NSString *post_name = [[[list objectAtIndex:indexPath.section] objectAtIndex:row] objectForKey:@"post_name"];
   NSString *board_name = [[[list objectAtIndex:indexPath.section] objectAtIndex:row] objectForKey:@"board_name"];
-
+  
   UILabel *textLabel = (UILabel *)[cell viewWithTag:1];
 	textLabel.text = post_name;
 	UILabel *userLabel = (UILabel *)[cell viewWithTag:2];
@@ -158,7 +160,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   //因为服务器返回的data是压缩过的，因此responseString是空值，必须通过responseData来转换。而responseData转换后是写成Unicode格式(\xxxx)的gb2312，因此这边处理起来比较麻烦
   NSData* responseData = [arequest responseData];
   NSStringEncoding enc = 
-    CFStringConvertEncodingToNSStringEncoding (kCFStringEncodingGB_18030_2000); 
+  CFStringConvertEncodingToNSStringEncoding (kCFStringEncodingGB_18030_2000); 
   NSString *responseString=[[NSString alloc]initWithData:responseData encoding:enc];
   
   NSMutableArray* sections = [[[NSMutableArray alloc]init]autorelease];
@@ -166,12 +168,12 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   //  regEx = @"<img class=hand onclick='location=\"bbsboa\\?sec=(.*)\"'";
   NSString * regEx_sections = @"<td colspan=2>";
   NSArray* matchArray_sections = [responseString componentsSeparatedByRegex:regEx_sections];
-
+  
   for (int i=1; i<[matchArray_sections count]; i++) {
     NSArray* matchArray_posts = [[matchArray_sections objectAtIndex:i] componentsSeparatedByRegex:@"<td>○"];
     NSMutableArray* posts = [[[NSMutableArray alloc]init]autorelease];
     for (int j=1; j<[matchArray_posts count]; j++) {
-
+      
       NSMutableDictionary* post = [[[NSMutableDictionary alloc]init]autorelease];
       //奇怪的正则表达式
       NSString* regEx_post = @"<a href=\"(.*)\">(.*)</a> \\[<a href=(.*)>(.*)</a>";

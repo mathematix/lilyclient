@@ -17,7 +17,7 @@
 @implementation PostController
 @synthesize content_view;
 @synthesize titleField;
-@synthesize titleLabel, urlString, postData;
+@synthesize titleLabel, urlString, postData, isPostingFinished, isCheckingFinished;
 
 #pragma mark - sys
 
@@ -49,8 +49,25 @@
 
 #pragma mark - View lifecycle
 
-- (void)viewDidAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated{
   [self grabURLInBackground];
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+  //如果view的graburl线程还没有结束，那么在这儿cancel掉
+  if (isLoadingFinished==false) {
+    [reply_request cancel];
+  }
+  //如果view的checking线程还没有结束，那么在这儿cancel掉
+  if (isCheckingFinished==false) {
+    [check_request cancel];
+  }
+  //如果view的posting线程还没有结束，那么在这儿cancel掉
+  if (isPostingFinished==false) {
+    [request cancel];
+  }
+  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+  lilydelegate.shouldRefreshView = true;
 }
 
 - (void)viewDidLoad
@@ -160,42 +177,54 @@
 
 - (IBAction)post:(id)sender
 {
-  NSURL *url;
-  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-  url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@&%@",[postData objectForKey:@"action"],lilydelegate.cookie_value]];
-  NSString* title = [titleField text];
-  NSString* content = [content_view text];
-  
-  activityIndicator = 
-  [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
-  UIBarButtonItem * loadingButton = 
-  [[UIBarButtonItem alloc] initWithCustomView:activityIndicator];
-  
-  // Set to Left or Right
-  [self.navigationItem setRightBarButtonItem:loadingButton];
-  [loadingButton release];
-  [activityIndicator startAnimating];
+  isCheckingFinished=false;
+  [self checkLogin];
+}
 
-  //生成并提交form
-  request = [ASIFormDataRequest requestWithURL:url];
-  [request setPostValue:[postData objectForKey:@"pid"] forKey:@"pid"];
-  [request setPostValue:[postData objectForKey:@"reid"] forKey:@"reid"];
-  [request setPostValue:title forKey:@"title"];
-  [request setPostValue:content forKey:@"text"];
-//  [request addRequestHeader:@"Content-Type" value:@"application/xml; charset=gb2312;"];
-//  [request setResponseEncoding:-2147483623];
-//  [request setDefaultResponseEncoding:-2147483623];
-  [request setStringEncoding:-2147483623];
-  [request setDidFinishSelector:@selector(postSucceed:)];
-  [request setDidFailSelector:@selector(postFailed:)];
-  [request setDelegate:self];
-  [request setUseSessionPersistence:NO];
-  [request setShouldRedirect:true];
-  [request startAsynchronous];
+-(void)checkLoginSucceed:(ASIHTTPRequest *) formRequest{
+  [super checkLoginSucceed:formRequest];
+  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+  if(lilydelegate.isLogin==true){
+    isPostingFinished = false;
+    NSURL *url;
+    url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@&%@",[postData objectForKey:@"action"],lilydelegate.cookie_value]];
+    NSString* title = [titleField text];
+    NSString* content = [content_view text];
+    
+    activityIndicator = 
+    [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+    UIBarButtonItem * loadingButton = 
+    [[UIBarButtonItem alloc] initWithCustomView:activityIndicator];
+    
+    [self.navigationItem setRightBarButtonItem:loadingButton];
+    [loadingButton release];
+    [activityIndicator startAnimating];
+    
+    //生成并提交form
+    request = [ASIFormDataRequest requestWithURL:url];
+    [request setPostValue:[postData objectForKey:@"pid"] forKey:@"pid"];
+    [request setPostValue:[postData objectForKey:@"reid"] forKey:@"reid"];
+    [request setPostValue:title forKey:@"title"];
+    [request setPostValue:content forKey:@"text"];
+    [request setStringEncoding:-2147483623];
+    [request setDidFinishSelector:@selector(postSucceed:)];
+    [request setDidFailSelector:@selector(postFailed:)];
+    [request setDelegate:self];
+    [request setUseSessionPersistence:NO];
+    [request setShouldRedirect:true];
+    [request startAsynchronous];
+  }
+  isCheckingFinished=true;
+}
+
+-(void)checkLoginFailed:(ASIHTTPRequest *)formRequest{
+  [super checkLoginFailed:formRequest];
+  isCheckingFinished = true;
 }
 
 - (void)postSucceed:(ASIHTTPRequest *) aRequest
 { 
+  isPostingFinished = true;
   [activityIndicator stopAnimating];
   [activityIndicator release];
   /*TODO: 加入是否发表成功的判断*/
@@ -213,7 +242,7 @@
                                         otherButtonTitles:nil];
   [alert show];
   [alert release];  
-  
+  isPostingFinished = true;
   [activityIndicator stopAnimating];
   [activityIndicator release];
 }
@@ -221,7 +250,13 @@
 //初始化
 - (void)grabURLInBackground
 {
-  [self checkLogin];
+  isLoadingFinished = false;
+  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+  //相当于点击发表文章或者回复文章，主要是为了从返回的页面中获取pid
+  NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@&%@",urlString,lilydelegate.cookie_value]];
+  reply_request = [ASIHTTPRequest requestWithURL:url];
+  [reply_request setDelegate:self];
+  [reply_request startAsynchronous];
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)arequest
@@ -243,23 +278,14 @@
   [postData setValue:[element objectForKey:@"value"] forKey:@"reid"];  //
   
   [titleField setText:title];
+  isLoadingFinished = true;
 }
 
 - (void)requestFailed:(ASIHTTPRequest *)arequest
 {
   /*TODO: 错误处理*/
   //NSError *error = [arequest error];
-}
-
--(void)checkLoginSucceed:(ASIHTTPRequest *) formRequest{
-  [super checkLoginSucceed:formRequest];
-  NSLog(@"%@",@"super done");
-  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-  //相当于点击发表文章或者回复文章，主要是为了从返回的页面中获取pid
-  NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/%@&%@",urlString,lilydelegate.cookie_value]];
-  ASIHTTPRequest *reply_request = [ASIHTTPRequest requestWithURL:url];
-  [reply_request setDelegate:self];
-  [reply_request startAsynchronous];
+  isLoadingFinished = true;
 }
 
 

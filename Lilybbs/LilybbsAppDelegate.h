@@ -15,6 +15,7 @@
   NSString* cookie_value;
   NSDictionary* cookie_dic;
   BOOL isLogin;
+  BOOL shouldRefreshView;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
@@ -25,5 +26,6 @@
 @property (nonatomic, retain) NSDictionary* cookie_dic;
 
 @property BOOL isLogin;
+@property BOOL shouldRefreshView;
 
 @end

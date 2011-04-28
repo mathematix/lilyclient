@@ -95,6 +95,8 @@ static NSString *haveLoggedKey = @"登出";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   NSUInteger row = [indexPath row]; 
   UITableViewController *nextController = [self.controllers objectAtIndex:row];
+  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+  lilydelegate.shouldRefreshView = true;
   [self.navigationController pushViewController:nextController animated:YES];
 }
 

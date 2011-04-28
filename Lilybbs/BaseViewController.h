@@ -13,6 +13,8 @@
 
 @interface BaseViewController : UIViewController {
   ASIHTTPRequest *check_request;
+  //标志load requst是否结束，以此判断是否需要进行requst cancel
+  BOOL isLoadingFinished;
 }
 
 @property (nonatomic, retain) ASIHTTPRequest *check_request;;

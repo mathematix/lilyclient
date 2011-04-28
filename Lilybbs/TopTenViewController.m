@@ -26,10 +26,12 @@ static NSString *haveLoggedKey = @"登出";
   if(lilydelegate.isLogin == true){
     self.navigationItem.rightBarButtonItem.title = haveLoggedKey;
   }
-  //显示loading遮罩
-  loadingView = [LoadingView loadingViewInView:self.view.superview];
-  //线程异步加载数据
-  [self grabURLInBackground];
+  if (lilydelegate.shouldRefreshView==true) {
+    //显示loading遮罩
+    loadingView = [LoadingView loadingViewInView:self.view.superview];
+    //线程异步加载数据
+    [self grabURLInBackground];    
+  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated{

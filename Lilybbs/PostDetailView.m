@@ -13,9 +13,10 @@
 #import "PostDetailController.h"
 #import "ASIHTTPRequest.h"
 
+//这个类写的乱七八糟的，稍候再修改
 @implementation PostDetailView
 @synthesize urlString, reply_links, http_request;
-@synthesize isLoadingFinished;
+@synthesize isLoadingFinished,post_index, isCheckingFinished,check_request;
 
 -(id)initWithFrame:(CGRect)frame{
   if([super initWithFrame:frame]){
@@ -60,35 +61,31 @@
     [string appendString:@"<hr>"];
     
   }
-
+  
   [string appendString:@"</body></html>"];
   //load the HTML String on UIWebView
   [self loadHTMLString:string baseURL:nil];
   [string release];
 }
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)arequest navigationType:(UIWebViewNavigationType)navigationType {	//linking the javascript to call the iPhone control
-  
-  
+//linking the javascript to call the iPhone control
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)arequest navigationType:(UIWebViewNavigationType)navigationType {	  
+    
   if ( [[arequest.mainDocumentURL.relativePath substringToIndex:6] isEqualToString:@"/reply"] ) 
   {
     LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
     if(lilydelegate.isLogin == true){
-      
-      PostController* postcontroller = [[PostController alloc] initWithNibName:@"PostView" bundle:nil];
-      NSInteger index = [[arequest.mainDocumentURL.relativePath substringFromIndex:7] intValue];
-      postcontroller.urlString = [reply_links objectAtIndex:index];
-      postcontroller.title = @"发表文章";
-      [[self viewController] pushViewController:postcontroller animated:YES];
-    }else{
+      post_index = [[arequest.mainDocumentURL.relativePath substringFromIndex:7] intValue];
+      [self checkLogin];
+    }
+    else{
       UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
                                                       message:@"匆匆过客不能发表文章！"
                                                      delegate:nil 
                                             cancelButtonTitle:@"取消" 
                                             otherButtonTitles:nil];
       [alert show];
-      [alert release];  
-      
+      [alert release]; 
     }
     return false;
   }
@@ -184,7 +181,7 @@
   if (match==@"") {
     start = 0;
   }else{
-  start = [content rangeOfString:[list valueForKey:@"site"]].location + [content rangeOfString:[list valueForKey:@"site"]].length+1;
+    start = [content rangeOfString:[list valueForKey:@"site"]].location + [content rangeOfString:[list valueForKey:@"site"]].length+1;
   }
   
   NSInteger end;
@@ -243,7 +240,7 @@
   //elements存放所有post的内容，head_elements存放所有回复链接，为什么没有放一起呢。。。因为一开始没想到。此外hpple经常解析出错，这个也没办法。。。有空了换正则表达式吧
   NSArray* elements = [xpathParser search:@"//table//textarea"];
   NSArray* head_elements = [xpathParser search:@"//table//tr/td/a[2]"];
-
+  
   NSMutableArray *contents = [[[NSMutableArray alloc] init] autorelease]; 
   for (NSInteger i=0; i<[elements count]; i++) {
     NSMutableArray* object = [[[NSMutableArray alloc] init] autorelease]; 
@@ -271,5 +268,55 @@
   isLoadingFinished=true;  
 }
 
+
+//check login
+-(void)checkLogin{
+  isCheckingFinished =false;
+  LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+  //这里用一个必须要登录才能访问的bbsinfo页面来做判断，流量很小，只返回800byte
+  NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/bbsinfo?%@",lilydelegate.cookie_value]];
+  
+  check_request = [ASIHTTPRequest requestWithURL:url];
+  [check_request setDelegate:self];
+  [check_request setDidFinishSelector:@selector(checkLoginSucceed:)];
+  [check_request setDidFailSelector:@selector(checkLoginFailed:)];
+  [check_request startAsynchronous];
+}
+
+-(void)checkLoginSucceed:(ASIHTTPRequest *) formRequest{
+  //如果返回的html中包含"错误"，则说明没有登录
+  if ([[formRequest responseString] rangeOfString:@"错误! 您尚未登录!"].location != NSNotFound){
+    LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
+    lilydelegate.isLogin = false;
+    lilydelegate.cookie_value = @"";
+    lilydelegate.cookie_dic = nil;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
+                                                    message:@"登录过期，请重新登录！"
+                                                   delegate:nil 
+                                          cancelButtonTitle:@"取消" 
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];  
+  }else{
+    PostController* postcontroller = [[PostController alloc] initWithNibName:@"PostView" bundle:nil];
+    postcontroller.urlString = [reply_links objectAtIndex:post_index];
+    postcontroller.title = @"发表文章";
+    [[self viewController] pushViewController:postcontroller animated:YES];
+  }
+  isCheckingFinished =true;
+}
+
+-(void)checkLoginFailed:(ASIHTTPRequest *) formRequest{
+  if ([[formRequest error]code]==2) {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
+                                                    message:@"网络暂时忙，请重试"
+                                                   delegate:nil 
+                                          cancelButtonTitle:@"确定" 
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+  }
+  isCheckingFinished =true;
+}
 
 @end
