@@ -15,6 +15,7 @@
 #import "PostDetailController.h"
 
 static NSString *haveLoggedKey = @"登出";
+static NSString *notLoggedKey = @"登入";
 
 @implementation TopAllViewController
 @synthesize sectionNames;
@@ -26,6 +27,8 @@ static NSString *haveLoggedKey = @"登出";
   LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
   if(lilydelegate.isLogin == true){
     self.navigationItem.rightBarButtonItem.title = haveLoggedKey;
+  }else{
+    self.navigationItem.rightBarButtonItem.title = notLoggedKey;  
   }
   if (lilydelegate.shouldRefreshView==true) {
     //显示loading遮罩

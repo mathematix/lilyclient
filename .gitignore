@@ -1,0 +1,12 @@
+.DS_Store
+profile
+*.swp
+*~.nib
+Lilybbs.xcodeproj/xcuserdata/*
+Lilybbs.xcodeproj/project.xcworkspace/xcuserdata/*
+*.mode1v3
+*.mode2v3
+*.pbxuser
+*.perspective
+*.perspectivev3
+build/*

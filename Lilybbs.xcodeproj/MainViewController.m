@@ -29,6 +29,8 @@ static NSString *haveLoggedKey = @"登出";
   LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
   if(lilydelegate.isLogin == true){
     self.navigationItem.rightBarButtonItem.title = haveLoggedKey;
+  }else{
+    self.navigationItem.rightBarButtonItem.title = notLoggedKey;  
   }
 }
 

@@ -153,7 +153,7 @@
 		BAC4EE3E1361395E00D36D9B /* PostController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostController.h; sourceTree = "<group>"; };
 		BAC4EE3F1361395E00D36D9B /* PostController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostController.m; sourceTree = "<group>"; };
 		BAC5F48F13625D9800F40DBD /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
-		BAC5F4A61362631F00F40DBD /* Lilybbs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lilybbs.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BAC5F4A61362631F00F40DBD /* Lilybbs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Lilybbs.app; path = "/Users/panda/Documents/iPhone_workspace/Lilybbs/build/Release-iphoneos/Lilybbs.app"; sourceTree = "<absolute>"; };
 		BAC5F4A91362636600F40DBD /* PostView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PostView.xib; path = Lilybbs.xcodeproj/PostView.xib; sourceTree = SOURCE_ROOT; };
 		BAC5F58913631A9200F40DBD /* SampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleViewController.h; sourceTree = "<group>"; };
 		BAC5F58A13631A9400F40DBD /* SampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleViewController.m; sourceTree = "<group>"; };
@@ -176,7 +176,7 @@
 		BAF8F4781345963300593BC2 /* LilybbsAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LilybbsAppDelegate.h; sourceTree = "<group>"; };
 		BAF8F4791345963300593BC2 /* LilybbsAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LilybbsAppDelegate.m; sourceTree = "<group>"; };
 		BAF8F47C1345963300593BC2 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
-		BAF8F4831345963300593BC2 /* LilybbsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LilybbsTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BAF8F4831345963300593BC2 /* LilybbsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = LilybbsTests.octest; path = "/Users/panda/Documents/iPhone_workspace/Lilybbs/build/Release-iphoneos/LilybbsTests.octest"; sourceTree = "<absolute>"; };
 		BAF8F48B1345963300593BC2 /* LilybbsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LilybbsTests-Info.plist"; sourceTree = "<group>"; };
 		BAF8F48D1345963300593BC2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BAF8F48F1345963300593BC2 /* LilybbsTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LilybbsTests-Prefix.pch"; sourceTree = "<group>"; };
@@ -386,8 +386,6 @@
 		BAF8F4661345963300593BC2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BAF8F4831345963300593BC2 /* LilybbsTests.octest */,
-				BAC5F4A61362631F00F40DBD /* Lilybbs.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
