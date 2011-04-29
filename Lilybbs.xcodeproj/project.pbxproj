@@ -55,6 +55,8 @@
 		BAC5F59413631B3500F40DBD /* DetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BAC5F59313631B3400F40DBD /* DetailCell.m */; };
 		BAC5F59713631B5400F40DBD /* ToggleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BAC5F59613631B5300F40DBD /* ToggleCell.m */; };
 		BAC5F59913631F5300F40DBD /* Sample.xib in Resources */ = {isa = PBXBuildFile; fileRef = BAC5F59813631F4E00F40DBD /* Sample.xib */; };
+		BAE261B7136B024000F060AB /* SectionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE261B5136B024000F060AB /* SectionsViewController.m */; };
+		BAE261B8136B024000F060AB /* SectionsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BAE261B6136B024000F060AB /* SectionsView.xib */; };
 		BAF8F46A1345963300593BC2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF8F4691345963300593BC2 /* UIKit.framework */; };
 		BAF8F46C1345963300593BC2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF8F46B1345963300593BC2 /* Foundation.framework */; };
 		BAF8F46E1345963300593BC2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF8F46D1345963300593BC2 /* CoreGraphics.framework */; };
@@ -153,7 +155,6 @@
 		BAC4EE3E1361395E00D36D9B /* PostController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostController.h; sourceTree = "<group>"; };
 		BAC4EE3F1361395E00D36D9B /* PostController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostController.m; sourceTree = "<group>"; };
 		BAC5F48F13625D9800F40DBD /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
-		BAC5F4A61362631F00F40DBD /* Lilybbs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Lilybbs.app; path = "/Users/panda/Documents/iPhone_workspace/Lilybbs/build/Release-iphoneos/Lilybbs.app"; sourceTree = "<absolute>"; };
 		BAC5F4A91362636600F40DBD /* PostView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PostView.xib; path = Lilybbs.xcodeproj/PostView.xib; sourceTree = SOURCE_ROOT; };
 		BAC5F58913631A9200F40DBD /* SampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleViewController.h; sourceTree = "<group>"; };
 		BAC5F58A13631A9400F40DBD /* SampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleViewController.m; sourceTree = "<group>"; };
@@ -166,6 +167,11 @@
 		BAC5F59513631B5100F40DBD /* ToggleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToggleCell.h; sourceTree = "<group>"; };
 		BAC5F59613631B5300F40DBD /* ToggleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToggleCell.m; sourceTree = "<group>"; };
 		BAC5F59813631F4E00F40DBD /* Sample.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Sample.xib; sourceTree = "<group>"; };
+		BAE261B1136AF51F00F060AB /* Lilybbs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lilybbs.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BAE261B3136AF51F00F060AB /* LilybbsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LilybbsTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BAE261B4136B024000F060AB /* SectionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SectionsViewController.h; sourceTree = "<group>"; };
+		BAE261B5136B024000F060AB /* SectionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SectionsViewController.m; sourceTree = "<group>"; };
+		BAE261B6136B024000F060AB /* SectionsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SectionsView.xib; sourceTree = "<group>"; };
 		BAF8F4691345963300593BC2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		BAF8F46B1345963300593BC2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BAF8F46D1345963300593BC2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -176,7 +182,6 @@
 		BAF8F4781345963300593BC2 /* LilybbsAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LilybbsAppDelegate.h; sourceTree = "<group>"; };
 		BAF8F4791345963300593BC2 /* LilybbsAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LilybbsAppDelegate.m; sourceTree = "<group>"; };
 		BAF8F47C1345963300593BC2 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
-		BAF8F4831345963300593BC2 /* LilybbsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = LilybbsTests.octest; path = "/Users/panda/Documents/iPhone_workspace/Lilybbs/build/Release-iphoneos/LilybbsTests.octest"; sourceTree = "<absolute>"; };
 		BAF8F48B1345963300593BC2 /* LilybbsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LilybbsTests-Info.plist"; sourceTree = "<group>"; };
 		BAF8F48D1345963300593BC2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BAF8F48F1345963300593BC2 /* LilybbsTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LilybbsTests-Prefix.pch"; sourceTree = "<group>"; };
@@ -272,6 +277,8 @@
 				BAF8F4C31345A48A00593BC2 /* TopTenViewController.m */,
 				BA51E188134D958700DECA82 /* TopAllViewController.h */,
 				BA51E189134D958700DECA82 /* TopAllViewController.m */,
+				BAE261B4136B024000F060AB /* SectionsViewController.h */,
+				BAE261B5136B024000F060AB /* SectionsViewController.m */,
 				BA0C4A34134E0840004E4D9E /* PostDetailController.h */,
 				BA0C4A35134E0840004E4D9E /* PostDetailController.m */,
 				BAC4EE3E1361395E00D36D9B /* PostController.h */,
@@ -292,6 +299,7 @@
 				BAF8F47B1345963300593BC2 /* MainWindow.xib */,
 				BA51E184134976B800DECA82 /* TopTenDetail.xib */,
 				BA51E18B134D964A00DECA82 /* TopAllDetail.xib */,
+				BAE261B6136B024000F060AB /* SectionsView.xib */,
 				BA51E21B134DEA8800DECA82 /* PostListItem.xib */,
 				BAC5F4A91362636600F40DBD /* PostView.xib */,
 			);
@@ -386,6 +394,8 @@
 		BAF8F4661345963300593BC2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				BAE261B1136AF51F00F060AB /* Lilybbs.app */,
+				BAE261B3136AF51F00F060AB /* LilybbsTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -471,7 +481,7 @@
 			);
 			name = Lilybbs;
 			productName = Lilybbs;
-			productReference = BAC5F4A61362631F00F40DBD /* Lilybbs.app */;
+			productReference = BAE261B1136AF51F00F060AB /* Lilybbs.app */;
 			productType = "com.apple.product-type.application";
 		};
 		BAF8F4821345963300593BC2 /* LilybbsTests */ = {
@@ -490,7 +500,7 @@
 			);
 			name = LilybbsTests;
 			productName = LilybbsTests;
-			productReference = BAF8F4831345963300593BC2 /* LilybbsTests.octest */;
+			productReference = BAE261B3136AF51F00F060AB /* LilybbsTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -536,6 +546,7 @@
 				BA8B53ED1369A123009F1914 /* disclosureButtonControllerIcon.png in Resources */,
 				BA8B53EE1369A123009F1914 /* moveMeIcon.png in Resources */,
 				BA8B53F21369A15C009F1914 /* style.css in Resources */,
+				BAE261B8136B024000F060AB /* SectionsView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -603,6 +614,7 @@
 				BA8B541C1369A1CD009F1914 /* ASIWebPageRequest.m in Sources */,
 				BA8B541D1369A1CD009F1914 /* Reachability.m in Sources */,
 				BA8B54201369A1E0009F1914 /* RegexKitLite.m in Sources */,
+				BAE261B7136B024000F060AB /* SectionsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

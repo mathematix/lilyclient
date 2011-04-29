@@ -12,6 +12,7 @@
 #import "ASIHTTPRequest.h"
 #import "LoginViewController.h"
 #import "LilybbsAppDelegate.h"
+#import "SectionsViewController.h"
 
 //登陆和登出的key，用于显示，以及判断不同的key，在action中进行不同的操作
 static NSString *notLoggedKey = @"登入";
@@ -36,9 +37,7 @@ static NSString *haveLoggedKey = @"登出";
 
 - (void)viewDidLoad {
   
-  UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithTitle:notLoggedKey style:UIBarButtonItemStylePlain target:self action:@selector(loginAction)];
-  [self.navigationItem setRightBarButtonItem:rightBarButton];
-  [rightBarButton release];
+  [self addRightLoginButton];
   
   self.title = @"LilyBBS";
   
@@ -52,11 +51,18 @@ static NSString *haveLoggedKey = @"登出";
   [topTenViewController release];
 
   //top all
-  TopAllViewController *topAllViewController =[[TopAllViewController alloc]initWithNibName:@"TopAllDetail" bundle:nil];
+  TopAllViewController *topAllViewController = [[TopAllViewController alloc]initWithNibName:@"TopAllDetail" bundle:nil];
   topAllViewController.title = @"各区热点";
 
   [array addObject:topAllViewController];
   [topAllViewController release];
+  
+  //sections
+  SectionsViewController*  sectionsViewController = [[SectionsViewController alloc]initWithNibName:@"SectionsView" bundle:nil];
+  sectionsViewController.title = @"分类讨论区";
+  
+  [array addObject:sectionsViewController];
+  [sectionsViewController release];
   
   self.controllers = array; 
   [array release]; 
@@ -101,38 +107,6 @@ static NSString *haveLoggedKey = @"登出";
   lilydelegate.shouldRefreshView = true;
   [self.navigationController pushViewController:nextController animated:YES];
 }
-
-//登录事件
-- (void)loginAction {
-  if ([self.navigationItem.rightBarButtonItem.title isEqualToString:notLoggedKey]) {
-    
-    LoginViewController* controller = [[[LoginViewController alloc] initWithNibName:@"Sample" bundle:nil] autorelease];
-    [self.navigationController presentModalViewController:controller animated:YES];
-  }
-  else{
-    /*TODO: 加入logout action*/
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:
-//                          @"Hey, do you see the disclosure button?" 
-//                                                    message:@"If you're trying to drill down, touch that instead"
-//                                                   delegate:nil 
-//                                          cancelButtonTitle:@"Won't happen again" 
-//                                          otherButtonTitles:nil];
-//    [alert show];
-//    [alert release];
-    LilybbsAppDelegate* lilydelegate = (LilybbsAppDelegate *)[[UIApplication sharedApplication]delegate];
-    //这里用一个必须要登录才能访问的bbsinfo页面来做判断，流量很小，只返回800byte
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs.nju.edu.cn/bbsinfo?%@",lilydelegate.cookie_value]];
-    
-    ASIHTTPRequest* request = [ASIHTTPRequest requestWithURL:url];
-    [request setDelegate:self];
-    [request setDidFinishSelector:@selector(logoutSucceed:)];
-    [request setDidFailSelector:@selector(logoutFailed:)];
-    [request startAsynchronous];
-    
-  }
-  
-}
-
 
 
 @end

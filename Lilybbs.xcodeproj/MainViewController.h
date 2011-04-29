@@ -8,9 +8,10 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "LoginDelegate.h"
+#import "BaseTableViewController.h"
 
 //主view
-@interface MainViewController : UITableViewController {
+@interface MainViewController : BaseTableViewController {
   //保存level 2的contoller
   NSArray *controllers;
 }

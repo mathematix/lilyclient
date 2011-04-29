@@ -173,7 +173,13 @@ static NSString *notLoggedKey = @"登入";
 
 - (void)logoutFailed:(ASIHTTPRequest *) aRequest
 { 
-  NSLog(@"logout failed");
+  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" 
+                                                  message:@"登出超时，请重试"
+                                                 delegate:nil 
+                                        cancelButtonTitle:@"确定" 
+                                        otherButtonTitles:nil];
+  [alert show];
+  [alert release]; 
 }
 
 @end
